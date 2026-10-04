@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Inbound Cargo - LMS{% endblock %}
+{% block page_title %}Inbound Cargo{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-dolly me-2 text-success"></i>Receive Inbound Cargo</h3>
+    <p class="text-muted">Record new stock received at the warehouse.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add / Update Stock</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('warehouse.inbound_cargo') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Item Name <span class="text-danger">*</span></label>
+                        <input type="text" name="item_name" class="form-control" placeholder="e.g. Cardboard Boxes (Large)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">SKU <span class="text-danger">*</span></label>
+                        <input type="text" name="sku" class="form-control" placeholder="e.g. SKU-BOX-L-001" required>
+                        <div class="form-text">If SKU already exists, quantity will be added to existing stock.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Quantity Received <span class="text-danger">*</span></label>
+                        <input type="number" name="quantity" class="form-control" min="1" placeholder="e.g. 50" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Shelf / Location</label>
+                        <input type="text" name="location" class="form-control" placeholder="e.g. Shelf A-1, Dock Area">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-dolly me-2"></i>Receive Cargo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Instructions</h6></div>
+            <div class="card-body">
+                <ol>
+                    <li class="mb-2">Inspect inbound cargo for damage before logging.</li>
+                    <li class="mb-2">Use the exact <strong>SKU code</strong> from the shipping manifest.</li>
+                    <li class="mb-2">If the SKU already exists in inventory, the quantity will be <strong>added</strong> automatically.</li>
+                    <li class="mb-2">Enter the correct shelf or location where the item is stored.</li>
+                    <li class="mb-2">After receiving, verify inventory count matches physical count.</li>
+                </ol>
+                <a href="{{ url_for('warehouse.inventory') }}" class="btn btn-outline-info">
+                    <i class="fas fa-boxes me-2"></i>View Current Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

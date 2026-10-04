@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LMS - Logistics Management System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=7) }}">
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar d-flex flex-column flex-shrink-0 p-3">
+        <div class="sidebar-brand mb-4">
+            <i class="fas fa-truck-fast me-2"></i>
+            <span>LMS</span>
+        </div>
+        <div class="user-info mb-4">
+            <div class="user-avatar">{{ (current_user.full_name or current_user.username)[0].upper() }}</div>
+            <div>
+                <div class="fw-bold text-white small">{{ current_user.full_name or current_user.username }}</div>
+                <span class="role-badge role-{{ current_user.role }}">{{ current_user.get_role_display() }}</span>
+            </div>
+        </div>
+        <hr class="sidebar-divider">
+        <ul class="nav nav-pills flex-column mb-auto">
+
+            {% if current_user.role == 'admin' %}
+            <li class="nav-item">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-line me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('admin.manage_users') }}" class="nav-link sidebar-link {% if request.endpoint == 'admin.manage_users' %}active{% endif %}">
+                    <i class="fas fa-users-cog me-2"></i> Manage Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('admin.settings') }}" class="nav-link sidebar-link {% if request.endpoint == 'admin.settings' %}active{% endif %}">
+                    <i class="fas fa-sliders me-2"></i> Settings
+                </a>
+            </li>
+
+            {% elif current_user.role == 'customer' %}
+            <li class="nav-item">
+                <a href="{{ url_for('customer.dashboard') }}" class="nav-link sidebar-link {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('customer.place_order') }}" class="nav-link sidebar-link {% if request.endpoint == 'customer.place_order' %}active{% endif %}">
+                    <i class="fas fa-box-open me-2"></i> Place Order
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('customer.track_shipment') }}" class="nav-link sidebar-link {% if request.endpoint == 'customer.track_shipment' %}active{% endif %}">
+                    <i class="fas fa-map-marker-alt me-2"></i> Track Shipment
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('customer.order_history') }}" class="nav-link sidebar-link {% if request.endpoint == 'customer.order_history' %}active{% endif %}">
+                    <i class="fas fa-history me-2"></i> Order History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('customer.profile') }}" class="nav-link sidebar-link {% if request.endpoint == 'customer.profile' %}active{% endif %}">
+                    <i class="fas fa-user-edit me-2"></i> My Profile
+                </a>
+            </li>
+
+            {% elif current_user.role == 'dispatcher' %}
+            <li class="nav-item">
+                <a href="{{ url_for('dispatcher.dashboard') }}" class="nav-link sidebar-link {% if request.endpoint == 'dispatcher.dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-line me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('dispatcher.assign_delivery') }}" class="nav-link sidebar-link {% if request.endpoint == 'dispatcher.assign_delivery' %}active{% endif %}">
+                    <i class="fas fa-tasks me-2"></i> Assign Deliveries
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('dispatcher.optimize_routes') }}" class="nav-link sidebar-link {% if request.endpoint == 'dispatcher.optimize_routes' %}active{% endif %}">
+                    <i class="fas fa-route me-2"></i> Optimize Routes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('dispatcher.fleet_status') }}" class="nav-link sidebar-link {% if request.endpoint == 'dispatcher.fleet_status' %}active{% endif %}">
+                    <i class="fas fa-truck me-2"></i> Fleet Status
+                </a>
+            </li>
+
+            {% elif current_user.role == 'delivery_agent' %}
+            <li class="nav-item">
+                <a href="{{ url_for('delivery_agent.dashboard') }}" class="nav-link sidebar-link {% if request.endpoint == 'delivery_agent.dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('delivery_agent.assigned_jobs') }}" class="nav-link sidebar-link {% if request.endpoint == 'delivery_agent.assigned_jobs' %}active{% endif %}">
+                    <i class="fas fa-clipboard-list me-2"></i> My Jobs
+                </a>
+            </li>
+
+            {% elif current_user.role == 'warehouse_staff' %}
+            <li class="nav-item">
+                <a href="{{ url_for('warehouse.dashboard') }}" class="nav-link sidebar-link {% if request.endpoint == 'warehouse.dashboard' %}active{% endif %}">
+                    <i class="fas fa-warehouse me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('warehouse.inbound_cargo') }}" class="nav-link sidebar-link {% if request.endpoint == 'warehouse.inbound_cargo' %}active{% endif %}">
+                    <i class="fas fa-dolly me-2"></i> Inbound Cargo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('warehouse.inventory') }}" class="nav-link sidebar-link {% if request.endpoint == 'warehouse.inventory' %}active{% endif %}">
+                    <i class="fas fa-boxes me-2"></i> Inventory
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        <hr class="sidebar-divider">
+        <a href="{{ url_for('auth.logout') }}" class="nav-link sidebar-link text-danger">
+            <i class="fas fa-sign-out-alt me-2"></i> Logout
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <!-- Top Bar -->
+        <div class="topbar d-flex align-items-center justify-content-between px-4 py-2">
+            <h6 class="mb-0 text-muted">{% block page_title %}{% endblock %}</h6>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small"><i class="fas fa-clock me-1"></i>Logistics Management System</span>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="px-4 pt-3">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content px-4 pb-4">
+{% else %}
+<!-- Unauthenticated layout -->
+<div class="auth-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index:9999; min-width:350px;">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% if current_user.is_authenticated %}
+        </div>
+    </div>
+    </div>
+{% else %}
+    </div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

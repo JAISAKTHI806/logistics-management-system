@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Place Order - LMS{% endblock %}
+{% block page_title %}Place New Order{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-box-open me-2 text-primary"></i>Place New Order</h3>
+    <p class="text-muted">Fill in the details below to create a shipment request.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Order Details</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('customer.place_order') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="product_type">Product Type <span class="text-danger">*</span></label>
+                        <select id="product_type" name="product_type" class="form-select" required>
+                            <option value="" disabled {% if not request.form.get('product_type') %}selected{% endif %}>Choose a product category</option>
+                            {% for category in product_categories %}
+                            <option value="{{ category }}" {% if request.form.get('product_type') == category %}selected{% endif %}>{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Choose the category that best describes your package.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="package_description">Product Name / Package Details <span class="text-danger">*</span></label>
+                        <input id="package_description" type="text" name="package_description" class="form-control" placeholder="e.g. Laptop, 1 unit" value="{{ request.form.get('package_description', '') }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold" for="quantity">Quantity <span class="text-danger">*</span></label>
+                            <input id="quantity" type="number" name="quantity" class="form-control" step="1" min="1" placeholder="e.g. 2" required>
+                            <div class="form-text">Enter a whole number of items in this package.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="pickup_hub">Pickup Hub</label>
+                        <input id="pickup_hub" type="text" class="form-control" value="{{ pickup_hub }}" readonly>
+                        <div class="form-text">All orders are collected from this logistics hub.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Delivery Address <span class="text-danger">*</span></label>
+                        <textarea name="delivery_address" class="form-control" rows="2" placeholder="Full delivery address with city" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Additional Notes</label>
+                        <textarea name="notes" class="form-control" rows="2" placeholder="Fragile, Handle with care, etc."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Order
+                        </button>
+                        <a href="{{ url_for('customer.dashboard') }}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Process</h6></div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered list-group-flush">
+                    <li class="list-group-item">You place the order</li>
+                    <li class="list-group-item">System validates the request</li>
+                    <li class="list-group-item">Warehouse prepares package</li>
+                    <li class="list-group-item">Dispatcher assigns delivery agent</li>
+                    <li class="list-group-item">Agent delivers to your address</li>
+                    <li class="list-group-item">You receive confirmation</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

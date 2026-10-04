@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Local databases and secrets
+instance/*.db
+.env
+.env.*
+!.env.example
+
+# Local tooling
+.vercel/
+.pytest_cache/

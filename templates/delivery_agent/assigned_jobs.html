@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}My Jobs - LMS{% endblock %}
+{% block page_title %}Assigned Jobs{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-clipboard-list me-2 text-info"></i>My Assigned Jobs</h3>
+    <p class="text-muted">View and manage all your delivery assignments.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>#</th><th>Tracking Number</th><th>Pickup</th><th>Delivery</th><th>Route</th><th>Status</th><th>Scheduled</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                    <tr>
+                        <td><strong>#{{ job.id }}</strong></td>
+                        <td><code>{{ job.shipment.tracking_number }}</code></td>
+                        <td class="small text-muted">{{ job.shipment.order.pickup_address[:30] }}...</td>
+                        <td class="small text-muted">{{ job.shipment.order.delivery_address[:30] }}...</td>
+                        <td class="small">
+                            {% if job.route %}
+                            <span class="badge bg-secondary">{{ job.route.route_name or 'Route #' + job.route.id|string }}</span>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td><span class="badge bg-{{ job.status_badge() }}">{{ job.delivery_status.replace('_',' ').title() }}</span></td>
+                        <td class="small text-muted">
+                            {% if job.scheduled_date %}{{ job.scheduled_date.strftime('%d %b %Y') }}{% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if job.delivery_status == 'assigned' %}
+                            <form method="POST" action="{{ url_for('delivery_agent.start_delivery', delivery_id=job.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-info" onclick="return confirm('Start this delivery?')">
+                                    <i class="fas fa-truck me-1"></i>Start
+                                </button>
+                            </form>
+                            {% elif job.delivery_status == 'in_transit' %}
+                            <a href="{{ url_for('delivery_agent.record_pod', delivery_id=job.id) }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-signature me-1"></i>Record POD
+                            </a>
+                            {% elif job.delivery_status == 'delivered' %}
+                            <span class="text-success small"><i class="fas fa-check me-1"></i>Completed</span>
+                            {% elif job.delivery_status == 'failed' %}
+                            <span class="text-danger small"><i class="fas fa-times me-1"></i>Failed</span>
+                            {% elif job.delivery_status == 'rescheduled' %}
+                            <span class="text-warning small"><i class="fas fa-calendar me-1"></i>Rescheduled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8" class="text-center text-muted py-5">
+                        <i class="fas fa-clipboard fa-2x d-block mb-2"></i>No jobs assigned to you yet.
+                    </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

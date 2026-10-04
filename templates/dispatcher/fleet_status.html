@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Fleet Status - LMS{% endblock %}
+{% block page_title %}Fleet Status{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-truck me-2 text-warning"></i>Fleet Status</h3>
+    <p class="text-muted">Real-time status of all delivery agents.</p>
+</div>
+
+{% for agent in agents %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <div class="user-avatar-sm">{{ (agent.full_name or agent.username)[0].upper() }}</div>
+            <strong class="ms-2">{{ agent.full_name or agent.username }}</strong>
+            <span class="badge bg-info ms-2">{{ agent.username }}</span>
+        </div>
+        <span class="badge bg-{% if agent_deliveries[agent.id]|selectattr('delivery_status','equalto','in_transit')|list %}warning{% else %}success{% endif %} fs-6">
+            {% if agent_deliveries[agent.id]|selectattr('delivery_status','equalto','in_transit')|list %}On Route{% else %}Available{% endif %}
+        </span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr><th>Delivery #</th><th>Tracking</th><th>Status</th><th>Scheduled</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for d in agent_deliveries[agent.id] %}
+                    <tr>
+                        <td><strong>#{{ d.id }}</strong></td>
+                        <td><code>{{ d.shipment.tracking_number }}</code></td>
+                        <td><span class="badge bg-{{ d.status_badge() }}">{{ d.delivery_status.replace('_',' ').title() }}</span></td>
+                        <td class="small text-muted">{% if d.scheduled_date %}{{ d.scheduled_date.strftime('%d %b %Y') }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if d.delivery_status == 'failed' %}
+                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#reschedModal{{ d.id }}">
+                                <i class="fas fa-calendar-alt me-1"></i>Reschedule
+                            </button>
+                            <!-- Reschedule Modal -->
+                            <div class="modal fade" id="reschedModal{{ d.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">Reschedule Delivery #{{ d.id }}</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="{{ url_for('dispatcher.reschedule', delivery_id=d.id) }}">
+                                            <div class="modal-body">
+                                                <label class="form-label">New Date</label>
+                                                <input type="date" name="new_date" class="form-control" required>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-warning btn-sm">Reschedule</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center text-muted small py-2">No deliveries assigned.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Record POD - LMS{% endblock %}
+{% block page_title %}Record Proof of Delivery{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-signature me-2 text-info"></i>Record Proof of Delivery</h3>
+    <p class="text-muted">Delivery #{{ delivery.id }} — {{ delivery.shipment.tracking_number }}</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <!-- Order Info Card -->
+        <div class="card shadow-sm mb-4 border-info">
+            <div class="card-header bg-info text-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Delivery Details</h6></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Tracking:</strong><br><code>{{ delivery.shipment.tracking_number }}</code></p>
+                        <p class="mb-1"><strong>Pickup From:</strong><br><small class="text-muted">{{ delivery.shipment.order.pickup_address }}</small></p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Deliver To:</strong><br><small class="text-muted">{{ delivery.shipment.order.delivery_address }}</small></p>
+                        <p class="mb-1"><strong>Package:</strong><br><small class="text-muted">{{ delivery.shipment.order.package_description }}</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POD Form -->
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-file-signature me-2"></i>Proof of Delivery Form</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('delivery_agent.record_pod', delivery_id=delivery.id) }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Delivery Notes / Recipient Confirmation</label>
+                        <textarea name="pod_notes" class="form-control" rows="4"
+                                  placeholder="e.g. Delivered to recipient John Doe at 3:45 PM. Signed and accepted." required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Delivery Outcome</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="outcome" id="delivered" value="delivered" checked>
+                                <label class="form-check-label text-success fw-semibold" for="delivered">
+                                    <i class="fas fa-check-circle me-1"></i>Successfully Delivered
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="outcome" id="failed" value="failed">
+                                <label class="form-check-label text-danger fw-semibold" for="failed">
+                                    <i class="fas fa-times-circle me-1"></i>Delivery Failed
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check me-2"></i>Submit POD
+                        </button>
+                        <a href="{{ url_for('delivery_agent.assigned_jobs') }}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

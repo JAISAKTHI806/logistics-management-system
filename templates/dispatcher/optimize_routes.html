@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Optimize Routes - LMS{% endblock %}
+{% block page_title %}Route Optimization{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-route me-2 text-warning"></i>Optimize Routes</h3>
+    <p class="text-muted">Create and manage optimized delivery routes.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Route</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('dispatcher.optimize_routes') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Route Name</label>
+                        <input type="text" name="route_name" class="form-control" placeholder="e.g. Route BLR-East" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Start Location</label>
+                        <input type="text" name="start_location" class="form-control" placeholder="e.g. Bengaluru Warehouse" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">End Location</label>
+                        <input type="text" name="end_location" class="form-control" placeholder="e.g. East Bengaluru Zone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Distance (km)</label>
+                        <input type="number" name="distance_km" class="form-control" step="0.1" placeholder="e.g. 22.5" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Estimated Time (minutes)</label>
+                        <input type="number" name="estimated_time" class="form-control" placeholder="e.g. 45" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="fas fa-magic me-2"></i>Create & Optimize
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Routes ({{ routes|length }})</h5></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th>#</th><th>Route Name</th><th>From</th><th>To</th><th>Distance</th><th>Est. Time</th><th>Optimized</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for r in routes %}
+                            <tr>
+                                <td>{{ r.id }}</td>
+                                <td><strong>{{ r.route_name or '—' }}</strong></td>
+                                <td class="text-muted small">{{ r.start_location }}</td>
+                                <td class="text-muted small">{{ r.end_location }}</td>
+                                <td>{{ r.distance_km }} km</td>
+                                <td>{{ r.estimated_time_mins }} min</td>
+                                <td>
+                                    {% if r.is_optimized %}
+                                    <span class="badge bg-success"><i class="fas fa-check me-1"></i>Yes</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="7" class="text-center text-muted py-4">No routes yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

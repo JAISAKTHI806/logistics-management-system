@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - LMS{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header dashboard-hero mb-4">
+    <h3><i class="fas fa-chart-line me-2 text-danger"></i>Admin Dashboard</h3>
+    <p class="text-muted">System overview and statistics</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-blue">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-number">{{ stats.total_users }}</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-green">
+            <div class="stat-icon"><i class="fas fa-box"></i></div>
+            <div class="stat-number">{{ stats.total_orders }}</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-orange">
+            <div class="stat-icon"><i class="fas fa-shipping-fast"></i></div>
+            <div class="stat-number">{{ stats.total_shipments }}</div>
+            <div class="stat-label">Shipments</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-purple">
+            <div class="stat-icon"><i class="fas fa-truck"></i></div>
+            <div class="stat-number">{{ stats.total_deliveries }}</div>
+            <div class="stat-label">Deliveries</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-yellow">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-number">{{ stats.pending_orders }}</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stat-card stat-card-teal">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-number">{{ stats.delivered }}</div>
+            <div class="stat-label">Delivered</div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Recent Orders</h5>
+        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-sm btn-outline-primary">Manage Users</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Customer</th>
+                        <th>Package</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.customer.full_name or order.customer.username }}</td>
+                        <td>{{ order.package_description[:30] }}...</td>
+                        <td class="text-muted small">{{ order.pickup_address[:25] }}...</td>
+                        <td class="text-muted small">{{ order.delivery_address[:25] }}...</td>
+                        <td>{{ order.quantity }}</td>
+                        <td><span class="badge bg-{{ order.status_badge() }}">{{ order.status.title() }}</span></td>
+                        <td class="text-muted small">{{ order.created_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">No orders yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

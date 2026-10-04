@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Register - LMS{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">Register as a Customer</p>
+        <form method="POST" action="{{ url_for('auth.register') }}">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                    <input type="text" name="full_name" class="form-control" placeholder="Your full name" required autofocus>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" placeholder="Your email address" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Phone</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    <input type="text" name="phone" class="form-control" placeholder="Phone number">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Choose a strong password" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success w-100 btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </button>
+        </form>
+        <hr class="my-3">
+        <p class="text-center text-muted small">Already have an account?
+            <a href="{{ url_for('auth.login') }}" class="text-primary fw-semibold">Sign In</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

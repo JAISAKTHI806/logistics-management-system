@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Agent Dashboard - LMS{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="page-header dashboard-hero mb-4">
+    <h3><i class="fas fa-tachometer-alt me-2 text-info"></i>Agent Dashboard</h3>
+    <p class="text-muted">Hello, {{ current_user.full_name or current_user.username }}! Here are your delivery stats.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-yellow">
+            <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+            <div class="stat-number">{{ stats.assigned }}</div>
+            <div class="stat-label">Assigned</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-blue">
+            <div class="stat-icon"><i class="fas fa-truck-moving"></i></div>
+            <div class="stat-number">{{ stats.in_transit }}</div>
+            <div class="stat-label">In Transit</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-green">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-number">{{ stats.delivered }}</div>
+            <div class="stat-label">Delivered</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-red">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-number">{{ stats.failed }}</div>
+            <div class="stat-label">Failed</div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>My Deliveries</h5>
+        <a href="{{ url_for('delivery_agent.assigned_jobs') }}" class="btn btn-sm btn-info">View All Jobs</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>#</th><th>Tracking</th><th>Status</th><th>Scheduled</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for d in deliveries[:5] %}
+                    <tr>
+                        <td><strong>#{{ d.id }}</strong></td>
+                        <td><code>{{ d.shipment.tracking_number }}</code></td>
+                        <td><span class="badge bg-{{ d.status_badge() }}">{{ d.delivery_status.replace('_',' ').title() }}</span></td>
+                        <td class="text-muted small">{% if d.scheduled_date %}{{ d.scheduled_date.strftime('%d %b') }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if d.delivery_status == 'assigned' %}
+                            <form method="POST" action="{{ url_for('delivery_agent.start_delivery', delivery_id=d.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-info"><i class="fas fa-play me-1"></i>Start</button>
+                            </form>
+                            {% elif d.delivery_status == 'in_transit' %}
+                            <a href="{{ url_for('delivery_agent.record_pod', delivery_id=d.id) }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-signature me-1"></i>Record POD
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No deliveries assigned yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Assign Delivery - LMS{% endblock %}
+{% block page_title %}Assign Deliveries{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-tasks me-2 text-warning"></i>Assign Deliveries</h3>
+    <p class="text-muted">Assign unassigned shipments to delivery agents.</p>
+</div>
+
+{% if shipments %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-inbox me-2"></i>Unassigned Shipments ({{ shipments|length }})</h5></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Tracking #</th><th>Status</th><th>Location</th><th>Est. Delivery</th><th>Assign</th></tr>
+                </thead>
+                <tbody>
+                    {% for s in shipments %}
+                    <tr>
+                        <td><code>{{ s.tracking_number }}</code></td>
+                        <td><span class="badge bg-{{ s.status_badge() }}">{{ s.current_status }}</span></td>
+                        <td>{{ s.current_location or 'Warehouse' }}</td>
+                        <td>{% if s.estimated_delivery %}{{ s.estimated_delivery.strftime('%d %b %Y') }}{% else %}—{% endif %}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#assignModal{{ s.id }}">
+                                <i class="fas fa-user-plus me-1"></i>Assign
+                            </button>
+                            <!-- Assign Modal -->
+                            <div class="modal fade" id="assignModal{{ s.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Assign Shipment {{ s.tracking_number }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="{{ url_for('dispatcher.assign_delivery') }}">
+                                            <input type="hidden" name="shipment_id" value="{{ s.id }}">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Delivery Agent</label>
+                                                    <select name="agent_id" class="form-select" required>
+                                                        <option value="">-- Select Agent --</option>
+                                                        {% for agent in agents %}
+                                                        <option value="{{ agent.id }}">{{ agent.full_name or agent.username }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Route</label>
+                                                    <select name="route_id" class="form-select">
+                                                        <option value="">-- Select Route --</option>
+                                                        {% for r in routes %}
+                                                        <option value="{{ r.id }}">{{ r.route_name }} ({{ r.distance_km }} km)</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Scheduled Date</label>
+                                                    <input type="date" name="scheduled_date" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-warning"><i class="fas fa-check me-1"></i>Assign</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-success">
+    <i class="fas fa-check-circle me-2"></i>All shipments have been assigned!
+</div>
+{% endif %}
+{% endblock %}

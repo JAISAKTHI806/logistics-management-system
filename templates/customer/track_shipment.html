@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Track Shipment - LMS{% endblock %}
+{% block page_title %}Track Shipment{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-map-marker-alt me-2 text-primary"></i>Track Your Shipment</h3>
+    <p class="text-muted">Enter your tracking number to get real-time status.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('customer.track_shipment') }}">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="tracking_number" class="form-control"
+                               placeholder="Enter tracking number (e.g. LMS-20241001-1001)"
+                               value="{{ request.args.get('tracking_number', '') }}"
+                               required>
+                        <button type="submit" class="btn btn-primary">Track</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if shipment %}
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Shipment: {{ shipment.tracking_number }}</h5>
+                <span class="badge bg-{{ shipment.status_badge() }} fs-6">{{ shipment.current_status }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Current Location:</strong><br>
+                        <i class="fas fa-map-pin text-danger me-1"></i>{{ shipment.current_location or 'Processing' }}</p>
+                        <p><strong>Shipment Date:</strong><br>{{ shipment.shipment_date.strftime('%d %B %Y, %I:%M %p') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estimated Delivery:</strong><br>
+                        {% if shipment.estimated_delivery %}
+                        {{ shipment.estimated_delivery.strftime('%d %B %Y') }}
+                        {% else %}TBD{% endif %}</p>
+                        {% if shipment.actual_delivery %}
+                        <p><strong>Actual Delivery:</strong><br>{{ shipment.actual_delivery.strftime('%d %B %Y, %I:%M %p') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Tracking Timeline -->
+                <h6 class="fw-bold mb-3">Shipment Timeline</h6>
+                <div class="tracking-timeline">
+                    {% set statuses = ['Order Placed', 'Package Prepared', 'Dispatched', 'In Transit', 'Delivered'] %}
+                    {% for status in statuses %}
+                    {% set is_done = shipment.current_status == 'Delivered' or (statuses.index(status) < statuses.index(shipment.current_status) if shipment.current_status in statuses else False) %}
+                    {% set is_current = shipment.current_status == status %}
+                    <div class="timeline-item {% if is_done %}done{% elif is_current %}current{% endif %}">
+                        <div class="timeline-dot">
+                            {% if is_done or is_current %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                        </div>
+                        <div class="timeline-content">
+                            <strong>{{ status }}</strong>
+                            {% if is_current %}<span class="badge bg-primary ms-2">Current</span>{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

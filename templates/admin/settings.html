@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Settings - LMS{% endblock %}
+{% block page_title %}System Settings{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+    <h3><i class="fas fa-sliders me-2 text-danger"></i>System Settings</h3>
+    <p class="text-muted">Configure system-wide settings</p>
+</div>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-cog me-2"></i>General Settings</h5></div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">System Name</label>
+                    <input type="text" class="form-control" value="Logistics Management System" disabled>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Default Currency</label>
+                    <select class="form-select" disabled><option>INR (₹)</option></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Package Quantity Unit</label>
+                    <input type="text" class="form-control" value="Items (whole number)" disabled>
+                </div>
+                <button class="btn btn-primary" disabled><i class="fas fa-save me-2"></i>Save Settings</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Info</h5></div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr><td class="fw-semibold">Version</td><td>1.0.0</td></tr>
+                    <tr><td class="fw-semibold">Framework</td><td>Flask 2.3</td></tr>
+                    <tr><td class="fw-semibold">Database</td><td>SQLite</td></tr>
+                    <tr><td class="fw-semibold">Roles Supported</td><td>5</td></tr>
+                    <tr><td class="fw-semibold">Academic Project</td><td>Software Engineering</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Login - LMS{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <i class="fas fa-truck-fast"></i>
+        </div>
+        <h2 class="auth-title">Logistics Management System</h2>
+        <p class="auth-subtitle">Sign in to your account</p>
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+            </button>
+        </form>
+        <hr class="my-4">
+        <p class="text-center text-muted mb-3 small">New customer?
+            <a href="{{ url_for('auth.register') }}" class="text-primary fw-semibold">Create Account</a>
+        </p>
+        {% if show_demo_credentials %}
+        <div class="demo-accounts">
+            <p class="text-muted small fw-semibold mb-2">Demo Credentials:</p>
+            <div class="row g-1 small">
+                <div class="col-6"><span class="badge bg-danger">admin</span> admin / admin123</div>
+                <div class="col-6"><span class="badge bg-primary">customer</span> customer / cust123</div>
+                <div class="col-6"><span class="badge bg-warning text-dark">dispatcher</span> dispatcher / disp123</div>
+                <div class="col-6"><span class="badge bg-info text-dark">agent</span> agent / agent123</div>
+                <div class="col-12"><span class="badge bg-success">warehouse</span> warehouse / ware123</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
