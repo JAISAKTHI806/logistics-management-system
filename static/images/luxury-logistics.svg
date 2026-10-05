@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" fill="none">
+  <defs>
+    <linearGradient id="gold" x1="70" y1="66" x2="430" y2="244" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0D98F"/>
+      <stop offset=".5" stop-color="#C8A64C"/>
+      <stop offset="1" stop-color="#806329"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="356" y1="157" x2="407" y2="191" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B3422"/>
+      <stop offset="1" stop-color="#171714"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(0 138 -229 0 360 157)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B9953F" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#B9953F" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="197" y="129" width="256" height="134" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <ellipse cx="353" cy="164" fill="url(#glow)" rx="206" ry="132"/>
+  <path d="M47 214h451" stroke="#9E8037" stroke-opacity=".18"/>
+  <path d="M83 201c45-57 80-59 125-28 53 37 79 28 119-21 31-38 62-50 102-33" stroke="#D4B45D" stroke-opacity=".66" stroke-width="2" stroke-dasharray="5 8" stroke-linecap="round">
+    <animate attributeName="stroke-dashoffset" values="0;-52" dur="5s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="82" cy="202" r="5" fill="#E5CB79"/>
+  <circle cx="430" cy="119" r="7" fill="#E5CB79">
+    <animate attributeName="r" values="6;9;6" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="430" cy="119" r="14" stroke="#D1AE54" stroke-opacity=".3"/>
+  <path d="M225 231h209" stroke="#000" stroke-opacity=".55" stroke-width="15" filter="url(#shadow)"/>
+  <path d="M225 226h209" stroke="url(#gold)" stroke-opacity=".58" stroke-width="2" stroke-linecap="round"/>
+  <g>
+    <path d="M248 147c0-5 4-9 9-9h105v75H248v-66Z" fill="#27251F" stroke="url(#gold)" stroke-width="2"/>
+    <path d="M257 147h97v57h-97v-57Z" fill="#1A1A17"/>
+    <path d="M269 157h73M269 169h73M269 181h52" stroke="#9D813C" stroke-opacity=".5" stroke-linecap="round"/>
+    <path d="M365 166h41l27 28v19h-68v-47Z" fill="#29271F" stroke="url(#gold)" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M376 172h26l17 18h-43v-18Z" fill="url(#glass)" stroke="#B7984A" stroke-opacity=".7"/>
+    <path d="M434 198h7v11h-7z" fill="#D7B85F"/>
+    <path d="M246 204h190v12H246z" fill="#171714" stroke="#A78943" stroke-width="2"/>
+    <circle cx="286" cy="217" r="15" fill="#10100E" stroke="url(#gold)" stroke-width="3"/>
+    <circle cx="286" cy="217" r="5" fill="#C8A64C"/>
+    <circle cx="403" cy="217" r="15" fill="#10100E" stroke="url(#gold)" stroke-width="3"/>
+    <circle cx="403" cy="217" r="5" fill="#C8A64C"/>
+    <path d="M247 153h-8v32h8m-8 8h8" stroke="#D7B85F" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g fill="#D8BD70" fill-opacity=".7">
+    <circle cx="117" cy="99" r="1.5"/><circle cx="177" cy="72" r="1"/><circle cx="460" cy="76" r="1.5"/>
+    <circle cx="486" cy="152" r="1"/><circle cx="143" cy="151" r="1"/><circle cx="207" cy="112" r="1.5"/>
+  </g>
+</svg>

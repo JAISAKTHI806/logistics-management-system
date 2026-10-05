@@ -1,11 +1,13 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 venv/
 .venv/
 
 # Local databases and secrets
 instance/*.db
+*.db
 .env
 .env.*
 !.env.example
@@ -13,3 +15,7 @@ instance/*.db
 # Local tooling
 .vercel/
 .pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
