@@ -40,6 +40,37 @@ def manage_users():
     users = User.query.order_by(User.created_at.desc()).all()
     return render_template('admin/manage_users.html', users=users)
 
+@admin_bp.route('/users/create-agent', methods=['POST'])
+@login_required
+@admin_required
+def create_delivery_agent():
+    username = request.form.get('username', '').strip()
+    full_name = request.form.get('full_name', '').strip()
+    email = request.form.get('email', '').strip().lower()
+    password = request.form.get('password', '')
+
+    if not username or not full_name or '@' not in email or len(password) < 8:
+        flash('Enter a name, username, valid email, and password with at least 8 characters.', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    if User.query.filter_by(username=username).first():
+        flash('That username is already in use.', 'danger')
+        return redirect(url_for('admin.manage_users'))
+    if User.query.filter_by(email=email).first():
+        flash('That email address is already in use.', 'danger')
+        return redirect(url_for('admin.manage_users'))
+
+    agent = User(username=username, full_name=full_name, email=email, role='delivery_agent', is_active=True)
+    agent.set_password(password)
+    db.session.add(agent)
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash('The delivery agent account could not be saved. Please check the details and try again.', 'danger')
+    else:
+        flash(f'Delivery agent {full_name} created and activated.', 'success')
+    return redirect(url_for('admin.manage_users'))
+
 @admin_bp.route('/users/toggle/<int:user_id>', methods=['POST'])
 @login_required
 @admin_required

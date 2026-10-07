@@ -42,36 +42,57 @@ def dashboard():
 @dispatcher_required
 def assign_delivery():
     if request.method == 'POST':
-        shipment_id = request.form.get('shipment_id')
-        agent_id    = request.form.get('agent_id')
-        route_id    = request.form.get('route_id')
-        sched_date  = request.form.get('scheduled_date')
-
-        shipment = Shipment.query.get(shipment_id)
-        if not shipment:
-            flash('Shipment not found.', 'danger')
-        else:
-            # Update shipment status
-            shipment.current_status = 'Dispatched'
-            shipment.order.status = 'shipped'
-
-            # Create delivery record
-            d = Delivery(
-                shipment_id=int(shipment_id),
-                agent_id=int(agent_id),
-                dispatcher_id=current_user.id,
-                route_id=int(route_id) if route_id else None,
-                scheduled_date=datetime.strptime(sched_date, '%Y-%m-%d') if sched_date else None,
-                delivery_status='assigned'
-            )
-            db.session.add(d)
-            db.session.commit()
-            flash(f'Delivery assigned successfully to agent.', 'success')
+        try:
+            shipment_id = int(request.form.get('shipment_id', ''))
+            agent_id = int(request.form.get('agent_id', ''))
+            raw_route_id = request.form.get('route_id', '').strip()
+            route_id = int(raw_route_id) if raw_route_id else None
+            raw_date = request.form.get('scheduled_date', '').strip()
+            scheduled_date = datetime.strptime(raw_date, '%Y-%m-%d') if raw_date else None
+        except (TypeError, ValueError):
+            flash('Please select a valid shipment and delivery agent, and enter a valid date.', 'danger')
             return redirect(url_for('dispatcher.assign_delivery'))
 
+        shipment = Shipment.query.filter_by(id=shipment_id).first()
+        agent = User.query.filter_by(id=agent_id, role='delivery_agent', is_active=True).first()
+        route = Route.query.filter_by(id=route_id).first() if route_id else None
+
+        if not shipment:
+            flash('That shipment could not be found. Refresh the page and try again.', 'danger')
+        elif not agent:
+            flash('Choose an active delivery agent.', 'danger')
+        elif route_id and not route:
+            flash('The selected route could not be found. Refresh the page and try again.', 'danger')
+        elif shipment.deliveries:
+            flash('This shipment already has a delivery assignment.', 'warning')
+        elif shipment.order.status not in ('validated', 'processing'):
+            flash('Only validated or prepared orders can be assigned.', 'warning')
+        else:
+            shipment.current_status = 'Dispatched'
+            shipment.order.status = 'shipped'
+            delivery = Delivery(
+                shipment_id=shipment.id,
+                agent_id=agent.id,
+                dispatcher_id=current_user.id,
+                route_id=route.id if route else None,
+                scheduled_date=scheduled_date,
+                delivery_status='assigned'
+            )
+            db.session.add(delivery)
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                flash('The delivery could not be saved. Please refresh and try again.', 'danger')
+            else:
+                flash(f'Delivery assigned successfully to {agent.full_name or agent.username}.', 'success')
+                return redirect(url_for('dispatcher.assign_delivery'))
+
     # Shipments that have no delivery assigned yet
-    assigned_ids = [d.shipment_id for d in Delivery.query.all()]
-    unassigned_shipments = Shipment.query.filter(~Shipment.id.in_(assigned_ids)).all() if assigned_ids else Shipment.query.all()
+    unassigned_shipments = Shipment.query.join(Order).filter(
+        Order.status.in_(['validated', 'processing']),
+        ~Shipment.deliveries.any()
+    ).order_by(Shipment.shipment_date.asc()).all()
     agents = User.query.filter_by(role='delivery_agent', is_active=True).all()
     routes = Route.query.all()
     return render_template('dispatcher/assign_delivery.html',
